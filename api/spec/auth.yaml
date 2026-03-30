@@ -1,0 +1,62 @@
+openapi: 3.0.3
+info:
+  title: Verisite Auth API
+  version: 0.1.0
+paths:
+  /auth/login:
+    post:
+      summary: Login the employee with email and password
+      operationId: loginEmployee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Employee session created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeSession'
+        '401':
+          description: Invalid employee credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthError'
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    EmployeeSession:
+      type: object
+      required:
+        - employeeId
+        - email
+        - displayName
+      properties:
+        employeeId:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+    AuthError:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string

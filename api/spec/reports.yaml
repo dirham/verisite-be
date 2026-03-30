@@ -1,0 +1,84 @@
+openapi: 3.0.3
+info:
+  title: Verisite Reports API
+  version: 0.1.0
+paths:
+  /reports/attendance/export:
+    get:
+      summary: Export the signed-in employee attendance report in Excel-ready CSV format
+      description: The current app returns report metadata together with CSV content for download.
+      operationId: exportAttendanceReport
+      responses:
+        '200':
+          description: Attendance report export returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedReport'
+  /reports/reimbursements/export:
+    get:
+      summary: Export the signed-in employee reimbursement report in Excel-ready CSV format
+      description: The current app returns report metadata together with CSV content for download.
+      operationId: exportReimbursementReport
+      responses:
+        '200':
+          description: Reimbursement report export returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedReport'
+components:
+  schemas:
+    GeneratedReport:
+      type: object
+      required:
+        - id
+        - type
+        - scope
+        - fileName
+        - formatLabel
+        - generatedAt
+        - rowCount
+        - content
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - attendance
+            - reimbursement
+        scope:
+          type: string
+          enum:
+            - singleEmployee
+        fileName:
+          type: string
+        formatLabel:
+          type: string
+          enum:
+            - CSV
+        generatedAt:
+          type: string
+          format: date-time
+        rowCount:
+          type: integer
+          minimum: 0
+        content:
+          type: string
+          description: Excel-ready CSV content.
+        employee:
+          $ref: '#/components/schemas/ReportEmployee'
+    ReportEmployee:
+      type: object
+      required:
+        - id
+        - name
+        - division
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        division:
+          type: string

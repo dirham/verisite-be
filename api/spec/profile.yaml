@@ -1,0 +1,156 @@
+openapi: 3.0.3
+info:
+  title: Verisite Profile API
+  version: 0.1.0
+paths:
+  /profile:
+    get:
+      summary: Get the signed-in employee profile
+      operationId: getProfile
+      responses:
+        '200':
+          description: Employee profile returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+    patch:
+      summary: Update signed-in employee profile fields such as name and division
+      operationId: updateProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Employee profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+  /profile/photo:
+    post:
+      summary: Upload or replace the signed-in employee profile picture
+      description: The current mock implementation stores a selected photo name and path.
+      operationId: updateProfilePhoto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfilePhotoRequest'
+      responses:
+        '200':
+          description: Profile picture updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+  /profile/language:
+    put:
+      summary: Update the signed-in employee language preference
+      operationId: updateProfileLanguage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateLanguagePreferenceRequest'
+      responses:
+        '200':
+          description: Language preference updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeProfile'
+  /profile/logout:
+    post:
+      summary: Logout the signed-in employee
+      operationId: logoutProfile
+      responses:
+        '204':
+          description: Employee logged out
+components:
+  schemas:
+    EmployeeProfile:
+      type: object
+      required:
+        - employeeId
+        - name
+        - division
+        - email
+        - roleLabel
+        - aboutTitle
+        - aboutDescription
+      properties:
+        employeeId:
+          type: string
+        name:
+          type: string
+        division:
+          type: string
+        email:
+          type: string
+          format: email
+        roleLabel:
+          type: string
+        aboutTitle:
+          type: string
+        aboutDescription:
+          type: string
+        profileImagePath:
+          type: string
+          nullable: true
+        profileImageName:
+          type: string
+          nullable: true
+        language:
+          $ref: '#/components/schemas/ProfileLanguage'
+    UpdateProfileRequest:
+      type: object
+      required:
+        - name
+        - division
+      properties:
+        name:
+          type: string
+        division:
+          type: string
+    UpdateProfilePhotoRequest:
+      type: object
+      required:
+        - photoPath
+        - photoName
+      properties:
+        photoPath:
+          type: string
+        photoName:
+          type: string
+    UpdateLanguagePreferenceRequest:
+      type: object
+      required:
+        - languageCode
+      properties:
+        languageCode:
+          type: string
+          enum:
+            - en
+            - id
+    ProfileLanguage:
+      type: object
+      required:
+        - code
+        - label
+      properties:
+        code:
+          type: string
+          enum:
+            - en
+            - id
+        label:
+          type: string
+          enum:
+            - English
+            - Bahasa Indonesia

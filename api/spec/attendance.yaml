@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Verisite Attendance API
+  version: 0.1.0
+paths:
+  /attendance/clock-in:
+    post:
+      summary: Create a clock-in record for the signed-in employee
+      operationId: recordClockIn
+      responses:
+        '201':
+          description: Clock-in recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecord'
+  /attendance/clock-out:
+    post:
+      summary: Create a clock-out record for the signed-in employee
+      operationId: recordClockOut
+      responses:
+        '201':
+          description: Clock-out recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceRecord'
+  /attendance/history:
+    get:
+      summary: Get attendance history for the signed-in employee
+      description: Returns attendance records ordered from newest to oldest.
+      operationId: getAttendanceHistory
+      responses:
+        '200':
+          description: Attendance history returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceHistoryResponse'
+components:
+  schemas:
+    AttendanceRecord:
+      type: object
+      required:
+        - id
+        - employeeId
+        - type
+        - occurredAt
+      properties:
+        id:
+          type: string
+        employeeId:
+          type: string
+        type:
+          type: string
+          enum:
+            - clockIn
+            - clockOut
+        occurredAt:
+          type: string
+          format: date-time
+        suspiciousReason:
+          type: string
+          nullable: true
+          description: Present only when the system flags the event for review.
+    AttendanceHistoryResponse:
+      type: object
+      required:
+        - records
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceRecord'
