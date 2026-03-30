@@ -4,13 +4,13 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 ## Open Questions
 
-- login response does not yet define access token or refresh token fields
-- logout is defined, but session invalidation details are not
-- attendance requests do not include location, timezone, or device integrity fields needed for suspicious checks
-- reimbursement admin endpoints do not define how admin identity is authenticated
-- attachment and profile photo requests use app-local file paths instead of durable upload identifiers
-- reports only cover `singleEmployee` scope, while broader reporting is mentioned elsewhere in product planning
-- error response format is inconsistent across endpoints
+- [ ] login response does not yet define access token or refresh token fields
+- [ ] logout is defined, but session invalidation details are not
+- [ ] attendance requests do not include location, timezone, or device integrity fields needed for suspicious checks
+- [ ] reimbursement admin endpoints do not define how admin identity is authenticated
+- [ ] attachment and profile photo requests use app-local file paths instead of durable upload identifiers
+- [ ] reports only cover `singleEmployee` scope, while broader reporting is mentioned elsewhere in product planning
+- [ ] error response format is inconsistent across endpoints
 
 ## Safe v1 Interpretation
 
@@ -23,6 +23,21 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 - prefer Phoenix controllers plus context modules over pushing business rules into routing layers
 - model contract-facing validation with changesets and explicit request mappers so spec drift stays easy to spot
+
+## Codex Notes
+
+- if a gap blocks implementation, document the chosen temporary interpretation in the slice that uses it
+- do not silently invent externally visible contract fields without updating `api/spec`
+- when possible, implement behind internal fields first and keep the API response stable
+
+## Recommended Resolution Order
+
+- [ ] auth token and session contract
+- [ ] upload and file identifier contract
+- [ ] admin authorization contract
+- [ ] attendance suspicious-check request fields
+- [ ] shared error envelope
+- [ ] report scope and pagination decisions
 
 ## Spec Location Recommendation
 
