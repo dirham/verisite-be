@@ -25,6 +25,20 @@ defmodule VerisiteBeWeb.ErrorResponse do
     |> halt()
   end
 
+  def forbidden(conn, message \\ "Forbidden") do
+    conn
+    |> put_status(:forbidden)
+    |> json(%{message: message})
+    |> halt()
+  end
+
+  def not_found(conn, message \\ "Not found") do
+    conn
+    |> put_status(:not_found)
+    |> json(%{message: message})
+    |> halt()
+  end
+
   defp errors_on(changeset) do
     traverse_errors(changeset, fn {message, opts} ->
       Enum.reduce(opts, message, fn {key, value}, acc ->

@@ -29,5 +29,11 @@ defmodule VerisiteBeWeb.Router do
     post("/attendance/clock-out", AttendanceController, :clock_out)
     post("/attendance/location-samples", AttendanceController, :location_samples)
     get("/attendance/history", AttendanceController, :history)
+    get("/reimbursements", ReimbursementController, :index)
+    post("/reimbursements", ReimbursementController, :create)
+    post("/reimbursements/:requestId/cancel", ReimbursementController, :cancel)
+    post("/admin/reimbursements/:requestId/approve", ReimbursementController, :approve)
+    post("/admin/reimbursements/:requestId/reject", ReimbursementController, :reject)
+    post("/admin/reimbursements/:requestId/payment", ReimbursementController, :payment)
   end
 end

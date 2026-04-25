@@ -17,7 +17,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] feature routes exist beyond health
 - [x] contract-aligned auth flow exists
 - [x] contract-aligned attendance flow exists
-- [ ] contract-aligned reimbursement flow exists
+- [x] contract-aligned reimbursement flow exists
 - [ ] contract-aligned reports flow exists
 
 ## Current Focus
@@ -30,7 +30,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] auth
 - [x] employees
 - [x] attendance
-- [ ] reimbursements
+- [x] reimbursements
 - [ ] reports
 - [ ] files
 
@@ -71,12 +71,12 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 ## 4. Reimbursements
 
-- [ ] submit request
-- [ ] list requests
-- [ ] cancel pending request
-- [ ] approve request
-- [ ] reject request
-- [ ] attach payment reference
+- [x] submit request
+- [x] list requests
+- [x] cancel pending request
+- [x] approve request
+- [x] reject request
+- [x] attach payment reference
 
 ## 5. Reports
 
@@ -140,10 +140,10 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 ### Slice R1. Reimbursement Submission
 
-- [ ] define reimbursement request and attachment schemas
-- [ ] implement reimbursement submission flow
-- [ ] expose the submission endpoint
-- [ ] verify request persistence and response mapping
+- [x] define reimbursement request and attachment schemas
+- [x] implement reimbursement submission flow
+- [x] expose the submission endpoint
+- [x] verify request persistence and response mapping
 
 ## Verification Backlog
 
