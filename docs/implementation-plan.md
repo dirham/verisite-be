@@ -18,7 +18,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] contract-aligned auth flow exists
 - [x] contract-aligned attendance flow exists
 - [x] contract-aligned reimbursement flow exists
-- [ ] contract-aligned reports flow exists
+- [x] contract-aligned reports flow exists
 
 ## Current Focus
 
@@ -31,7 +31,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] employees
 - [x] attendance
 - [x] reimbursements
-- [ ] reports
+- [x] reports
 - [ ] files
 
 ## Build Order
@@ -80,9 +80,9 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 ## 5. Reports
 
-- [ ] attendance CSV export
-- [ ] reimbursement CSV export
-- [ ] response mapping to inline JSON content defined in the current spec
+- [x] attendance CSV export
+- [x] reimbursement CSV export
+- [x] response mapping to inline JSON content defined in the current spec
 
 ## 6. Hardening
 
