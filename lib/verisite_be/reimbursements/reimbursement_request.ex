@@ -39,7 +39,7 @@ defmodule VerisiteBe.Reimbursements.ReimbursementRequest do
       :rejection_reason,
       :payment_reference
     ])
-    |> validate_required([:employee_id, :title, :amount, :submitted_at, :status, :notes])
+    |> validate_required([:employee_id, :title, :amount, :submitted_at, :status])
     |> validate_number(:amount, greater_than: 0)
     |> validate_inclusion(:status, ["pending", "approved", "rejected", "canceled"])
   end
