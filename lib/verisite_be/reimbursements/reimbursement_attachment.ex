@@ -22,7 +22,7 @@ defmodule VerisiteBe.Reimbursements.ReimbursementAttachment do
   def changeset(attachment, attrs) do
     attachment
     |> cast(attrs, [:request_id, :stored_file_id, :name, :path, :source])
-    |> validate_required([:request_id, :name, :path, :source])
+    |> validate_required([:request_id, :stored_file_id, :name, :path, :source])
     |> validate_inclusion(:source, ["gallery", "camera"])
   end
 end

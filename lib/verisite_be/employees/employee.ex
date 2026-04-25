@@ -2,6 +2,8 @@ defmodule VerisiteBe.Employees.Employee do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias VerisiteBe.Files.StoredFile
+
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
 
@@ -19,6 +21,8 @@ defmodule VerisiteBe.Employees.Employee do
     field(:profile_image_name, :string)
     field(:language_code, :string, default: "en")
 
+    belongs_to(:profile_image_file, StoredFile)
+
     timestamps(type: :utc_datetime)
   end
 
@@ -34,6 +38,7 @@ defmodule VerisiteBe.Employees.Employee do
       :role_label,
       :about_title,
       :about_description,
+      :profile_image_file_id,
       :profile_image_path,
       :profile_image_name,
       :language_code
@@ -71,7 +76,7 @@ defmodule VerisiteBe.Employees.Employee do
 
   def photo_changeset(employee, attrs) do
     employee
-    |> cast(attrs, [:profile_image_path, :profile_image_name])
-    |> validate_required([:profile_image_path, :profile_image_name])
+    |> cast(attrs, [:profile_image_file_id, :profile_image_path, :profile_image_name])
+    |> validate_required([:profile_image_file_id, :profile_image_path, :profile_image_name])
   end
 end

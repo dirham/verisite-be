@@ -7,6 +7,7 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
   alias Ecto.Adapters.SQL.Sandbox
   alias VerisiteBe.Auth.Session
   alias VerisiteBe.Employees.Employee
+  alias VerisiteBe.Files.StoredFile
   alias VerisiteBe.Reimbursements.ReimbursementAttachment
   alias VerisiteBe.Reimbursements.ReimbursementRequest
   alias VerisiteBe.Repo
@@ -71,10 +72,16 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
     employee: employee,
     employee_token: token
   } do
+    file =
+      insert_stored_file(employee.id, %{
+        name: "receipt.jpg",
+        path: "/uploads/reimbursement/receipt.jpg"
+      })
+
     conn =
       build_conn()
       |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/api/reimbursements", valid_submission_payload())
+      |> post("/api/reimbursements", valid_submission_payload(file.id))
 
     assert %{
              "id" => request_id,
@@ -86,9 +93,11 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
              "attachments" => [
                %{
                  "id" => attachment_id,
+                 "fileId" => file_id,
                  "name" => "receipt.jpg",
-                 "path" => "/tmp/receipt.jpg",
-                 "source" => "gallery"
+                 "path" => "/uploads/reimbursement/receipt.jpg",
+                 "source" => "gallery",
+                 "provider" => "local"
                }
              ],
              "reviewedBy" => nil,
@@ -98,6 +107,7 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
            } = json_response(conn, 201)
 
     assert employee_id == employee.id
+    assert file_id == file.id
     assert {:ok, _uuid} = Ecto.UUID.cast(request_id)
     assert {:ok, _uuid} = Ecto.UUID.cast(attachment_id)
     assert Repo.aggregate(ReimbursementRequest, :count, :id) == 1
@@ -249,11 +259,16 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
     assert json_response(conn, 404) == %{"message" => "Reimbursement request not found"}
   end
 
-  test "defaults notes to an empty string when omitted", %{employee_token: token} do
+  test "defaults notes to an empty string when omitted", %{
+    employee: employee,
+    employee_token: token
+  } do
+    file = insert_stored_file(employee.id, %{})
+
     conn =
       build_conn()
       |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/api/reimbursements", Map.delete(valid_submission_payload(), "notes"))
+      |> post("/api/reimbursements", Map.delete(valid_submission_payload(file.id), "notes"))
 
     assert %{"notes" => ""} = json_response(conn, 201)
   end
@@ -265,31 +280,28 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
       |> post("/api/reimbursements", %{
         "title" => "Taxi receipt",
         "amount" => 150_000,
-        "attachments" => [%{"name" => "receipt.jpg"}]
+        "attachments" => [%{"source" => "gallery"}]
       })
 
     assert %{"message" => "Invalid request", "errors" => errors} = json_response(conn, 422)
-    assert "can't be blank" in List.wrap(errors["id"])
-    assert "can't be blank" in List.wrap(errors["path"])
-    assert "can't be blank" in List.wrap(errors["source"])
+    assert "can't be blank" in List.wrap(errors["fileId"])
   end
 
   test "rejects submission without a bearer token" do
-    conn = post(build_conn(), "/api/reimbursements", valid_submission_payload())
+    conn =
+      post(build_conn(), "/api/reimbursements", valid_submission_payload(Ecto.UUID.generate()))
 
     assert json_response(conn, 401) == %{"message" => "Unauthorized"}
   end
 
-  defp valid_submission_payload do
+  defp valid_submission_payload(file_id) do
     %{
       "title" => "Taxi receipt",
       "amount" => 150_000,
       "notes" => "Airport to client office",
       "attachments" => [
         %{
-          "id" => Ecto.UUID.generate(),
-          "name" => "receipt.jpg",
-          "path" => "/tmp/receipt.jpg",
+          "fileId" => file_id,
           "source" => "gallery"
         }
       ]
@@ -333,9 +345,12 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
   end
 
   defp insert_attachment(request_id, name) do
+    stored_file = insert_stored_file(nil, %{name: name, path: "/tmp/#{name}"})
+
     %ReimbursementAttachment{}
     |> ReimbursementAttachment.changeset(%{
       request_id: request_id,
+      stored_file_id: stored_file.id,
       name: name,
       path: "/tmp/#{name}",
       source: "gallery"
@@ -347,5 +362,22 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
     :sha256
     |> :crypto.hash(token)
     |> Base.encode16(case: :lower)
+  end
+
+  defp insert_stored_file(employee_id, attrs) do
+    defaults = %{
+      employee_id: employee_id,
+      name: "receipt.jpg",
+      path: "/tmp/receipt.jpg",
+      source: "gallery",
+      content_type: "image/jpeg",
+      provider: "local",
+      storage_key: "reimbursement/receipt.jpg",
+      usage: "reimbursementAttachment"
+    }
+
+    %StoredFile{}
+    |> StoredFile.changeset(Map.merge(defaults, attrs))
+    |> Repo.insert!()
   end
 end

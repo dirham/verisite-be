@@ -32,7 +32,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] attendance
 - [x] reimbursements
 - [x] reports
-- [ ] files
+- [x] files
 
 ## Build Order
 
@@ -90,7 +90,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [ ] rate limits
 - [ ] audit fields
 - [ ] observability
-- [ ] contract cleanup for upload and token flows
+- [ ] contract cleanup for token flows
 
 ## Slice Backlog
 
@@ -113,6 +113,24 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] add shared error response mapping
 - [x] add auth plug scaffolding
 - [ ] add API contract serving or validation hooks if needed
+
+### Slice F4. File Storage
+
+- [x] add provider-backed file upload context
+- [x] add persisted storage backend settings for future admin control
+- [x] expose file upload and storage settings endpoints
+- [x] refactor profile photo and reimbursement attachment flows to use uploaded file ids
+- [x] wire the S3-compatible transport adapter for AWS and MinIO-style endpoints
+- [ ] wire the Google Drive transport adapter if the product still needs it after the admin UI lands
+
+### Slice H1. Admin Access And UI Preparation
+
+- [ ] tighten backend role checks so admin is the only elevated role for now
+- [ ] define admin-only API capabilities explicitly in `api/spec`
+- [ ] design a later role-management slice where admins can create roles and assign route access
+- [ ] add audit-oriented storage settings and reimbursement review coverage
+- [ ] document the future admin web app contract for a minimal Vue + `shadcn-vue` UI
+- [ ] keep the admin UI as a separate frontend slice from this backend repo unless product direction changes
 
 ### Slice A1. Auth Skeleton
 
@@ -155,7 +173,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 ## Done Criteria
 
-- [ ] every current OpenAPI path has a working handler
+- [x] every current OpenAPI path has a working handler
 - [ ] database schema covers attendance, reimbursement, employee, session, and file data
 - [ ] local seed data supports employee and admin review flows
 - [ ] tests cover state transitions and CSV generation

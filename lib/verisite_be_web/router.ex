@@ -25,6 +25,7 @@ defmodule VerisiteBeWeb.Router do
     post("/profile/photo", ProfileController, :update_photo)
     put("/profile/language", ProfileController, :update_language)
     post("/profile/logout", ProfileController, :logout)
+    post("/files/upload", FileController, :create)
     post("/attendance/clock-in", AttendanceController, :clock_in)
     post("/attendance/clock-out", AttendanceController, :clock_out)
     post("/attendance/location-samples", AttendanceController, :location_samples)
@@ -39,5 +40,7 @@ defmodule VerisiteBeWeb.Router do
     post("/admin/reimbursements/:requestId/approve", ReimbursementController, :approve)
     post("/admin/reimbursements/:requestId/reject", ReimbursementController, :reject)
     post("/admin/reimbursements/:requestId/payment", ReimbursementController, :payment)
+    get("/admin/settings/storage", FileController, :settings)
+    put("/admin/settings/storage", FileController, :update_settings)
   end
 end

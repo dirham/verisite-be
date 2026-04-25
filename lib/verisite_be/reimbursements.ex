@@ -4,12 +4,18 @@ defmodule VerisiteBe.Reimbursements do
   alias Ecto.Changeset
   alias Ecto.Multi
   alias VerisiteBe.Employees.Employee
+  alias VerisiteBe.Files
+  alias VerisiteBe.Files.StoredFile
   alias VerisiteBe.Reimbursements.ReimbursementAttachment
   alias VerisiteBe.Reimbursements.ReimbursementRequest
   alias VerisiteBe.Repo
 
   def submit_request(%Employee{} = employee, attrs) do
-    with {:ok, submission} <- validate_submission(attrs) do
+    with {:ok, submission} <- validate_submission(employee, attrs) do
+      files_by_id =
+        submission.files
+        |> Map.new(fn %StoredFile{} = file -> {file.id, file} end)
+
       Multi.new()
       |> Multi.insert(
         :request,
@@ -22,13 +28,17 @@ defmodule VerisiteBe.Reimbursements do
           status: "pending"
         })
       )
-      |> insert_attachments(submission.attachments)
+      |> insert_attachments(submission.attachments, files_by_id)
       |> Repo.transaction()
       |> case do
         {:ok, %{request: request}} ->
           request =
             Repo.preload(request,
-              attachments: from(a in ReimbursementAttachment, order_by: a.inserted_at)
+              attachments:
+                from(a in ReimbursementAttachment,
+                  order_by: a.inserted_at,
+                  preload: [:stored_file]
+                )
             )
 
           {:ok, request}
@@ -146,17 +156,20 @@ defmodule VerisiteBe.Reimbursements do
     %{requests: Enum.map(requests, &to_request/1)}
   end
 
-  defp insert_attachments(multi, attachments) do
+  defp insert_attachments(multi, attachments, files_by_id) do
     Enum.with_index(attachments)
     |> Enum.reduce(multi, fn {attachment, index}, acc ->
+      file = Map.fetch!(files_by_id, attachment.file_id)
+
       Multi.insert(
         acc,
         {:attachment, index},
         fn %{request: request} ->
           ReimbursementAttachment.changeset(%ReimbursementAttachment{}, %{
             request_id: request.id,
-            name: attachment.name,
-            path: attachment.path,
+            stored_file_id: file.id,
+            name: file.name,
+            path: file.path,
             source: attachment.source
           })
         end
@@ -164,7 +177,7 @@ defmodule VerisiteBe.Reimbursements do
     end)
   end
 
-  defp validate_submission(attrs) when is_map(attrs) do
+  defp validate_submission(%Employee{} = employee, attrs) when is_map(attrs) do
     changeset =
       {%{}, %{title: :string, amount: :float, notes: :string, attachments: {:array, :map}}}
       |> Changeset.cast(attrs, [:title, :amount, :notes, :attachments])
@@ -173,13 +186,15 @@ defmodule VerisiteBe.Reimbursements do
       |> Changeset.validate_length(:attachments, min: 1)
 
     with true <- changeset.valid?,
-         {:ok, attachments} <- validate_attachments(Changeset.get_field(changeset, :attachments)) do
+         {:ok, attachments, files} <-
+           validate_attachments(employee, Changeset.get_field(changeset, :attachments)) do
       {:ok,
        %{
          title: Changeset.get_field(changeset, :title),
          amount: Decimal.from_float(Changeset.get_field(changeset, :amount)),
          notes: Changeset.get_field(changeset, :notes) || "",
-         attachments: attachments
+         attachments: attachments,
+         files: files
        }}
     else
       false -> {:error, changeset}
@@ -187,9 +202,9 @@ defmodule VerisiteBe.Reimbursements do
     end
   end
 
-  defp validate_submission(_attrs), do: {:error, invalid_payload_changeset()}
+  defp validate_submission(%Employee{}, _attrs), do: {:error, invalid_payload_changeset()}
 
-  defp validate_attachments(attachments) do
+  defp validate_attachments(%Employee{} = employee, attachments) do
     attachments
     |> Enum.reduce_while({:ok, []}, fn attachment, {:ok, acc} ->
       case validate_attachment(attachment) do
@@ -198,23 +213,30 @@ defmodule VerisiteBe.Reimbursements do
       end
     end)
     |> case do
-      {:ok, validated_attachments} -> {:ok, Enum.reverse(validated_attachments)}
-      error -> error
+      {:ok, validated_attachments} ->
+        file_ids = Enum.map(validated_attachments, & &1.file_id)
+
+        with {:ok, files} <- Files.fetch_owned_files(employee, file_ids) do
+          {:ok, Enum.reverse(validated_attachments), files}
+        end
+
+      error ->
+        error
     end
   end
 
   defp validate_attachment(attrs) when is_map(attrs) do
     changeset =
-      {%{}, %{id: :string, name: :string, path: :string, source: :string}}
-      |> Changeset.cast(attrs, [:id, :name, :path, :source])
-      |> Changeset.validate_required([:id, :name, :path, :source])
+      {%{}, %{fileId: :string, source: :string}}
+      |> Changeset.cast(attrs, [:fileId, :source])
+      |> Changeset.validate_required([:fileId, :source])
+      |> validate_uuid(:fileId)
       |> Changeset.validate_inclusion(:source, ["gallery", "camera"])
 
     if changeset.valid? do
       {:ok,
        %{
-         name: Changeset.get_field(changeset, :name),
-         path: Changeset.get_field(changeset, :path),
+         file_id: Changeset.get_field(changeset, :fileId),
          source: Changeset.get_field(changeset, :source)
        }}
     else
@@ -286,9 +308,11 @@ defmodule VerisiteBe.Reimbursements do
   defp to_attachment(%ReimbursementAttachment{} = attachment) do
     %{
       id: attachment.id,
+      fileId: attachment.stored_file_id,
       name: attachment.name,
       path: attachment.path,
-      source: attachment.source
+      source: attachment.source,
+      provider: attachment.stored_file && attachment.stored_file.provider
     }
   end
 
@@ -317,7 +341,10 @@ defmodule VerisiteBe.Reimbursements do
   end
 
   defp attachments_query do
-    from(attachment in ReimbursementAttachment, order_by: attachment.inserted_at)
+    from(attachment in ReimbursementAttachment,
+      order_by: attachment.inserted_at,
+      preload: [:stored_file]
+    )
   end
 
   defp validate_uuid(changeset, field) do

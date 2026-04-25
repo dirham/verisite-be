@@ -35,6 +35,9 @@ defmodule VerisiteBeWeb.ProfileController do
 
   defp render_profile({:ok, employee}, conn), do: json(conn, Employees.to_profile(employee))
 
+  defp render_profile({:error, :not_found}, conn),
+    do: ErrorResponse.not_found(conn, "Uploaded file not found")
+
   defp render_profile({:error, changeset}, conn),
     do: ErrorResponse.validation_error(conn, changeset)
 end

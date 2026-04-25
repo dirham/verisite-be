@@ -1,0 +1,189 @@
+openapi: 3.0.3
+info:
+  title: Verisite Files API
+  version: 0.1.0
+paths:
+  /files/upload:
+    post:
+      summary: Upload a file through the active storage backend
+      operationId: uploadFile
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadFileRequest'
+      responses:
+        '201':
+          description: File uploaded and registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadedFile'
+        '401':
+          description: Missing or invalid bearer token
+        '409':
+          description: The active storage backend is configured but not available yet
+        '422':
+          description: Invalid upload payload
+  /admin/settings/storage:
+    get:
+      summary: Read the current storage backend settings
+      operationId: getStorageSettings
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Storage settings returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageSettings'
+        '401':
+          description: Missing or invalid bearer token
+        '403':
+          description: Admin access required
+    put:
+      summary: Update the current storage backend settings
+      operationId: updateStorageSettings
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStorageSettingsRequest'
+      responses:
+        '200':
+          description: Storage settings updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StorageSettings'
+        '401':
+          description: Missing or invalid bearer token
+        '403':
+          description: Admin access required
+        '422':
+          description: Invalid storage settings payload
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    UploadFileRequest:
+      type: object
+      required:
+        - name
+        - source
+        - contentType
+        - contentBase64
+      properties:
+        name:
+          type: string
+        source:
+          type: string
+          enum:
+            - gallery
+            - camera
+            - profile
+        contentType:
+          type: string
+        contentBase64:
+          type: string
+        usage:
+          type: string
+          enum:
+            - general
+            - profilePhoto
+            - reimbursementAttachment
+          default: general
+    UploadedFile:
+      type: object
+      required:
+        - fileId
+        - name
+        - path
+        - source
+        - contentType
+        - provider
+        - usage
+      properties:
+        fileId:
+          type: string
+        name:
+          type: string
+        path:
+          type: string
+        source:
+          type: string
+        contentType:
+          type: string
+        provider:
+          type: string
+          enum:
+            - local
+            - aws
+            - google_drive
+        usage:
+          type: string
+          enum:
+            - general
+            - profilePhoto
+            - reimbursementAttachment
+    StorageSettings:
+      type: object
+      description: Server-side credentials remain outside this API. The `aws` provider targets S3-compatible services such as AWS S3 or MinIO.
+      required:
+        - activeProvider
+        - local
+        - aws
+        - googleDrive
+      properties:
+        activeProvider:
+          type: string
+          enum:
+            - local
+            - aws
+            - google_drive
+        local:
+          $ref: '#/components/schemas/LocalStorageSettings'
+        aws:
+          $ref: '#/components/schemas/AwsStorageSettings'
+        googleDrive:
+          $ref: '#/components/schemas/GoogleDriveStorageSettings'
+    UpdateStorageSettingsRequest:
+      allOf:
+        - $ref: '#/components/schemas/StorageSettings'
+    LocalStorageSettings:
+      type: object
+      required:
+        - basePath
+      properties:
+        basePath:
+          type: string
+    AwsStorageSettings:
+      type: object
+      properties:
+        bucket:
+          type: string
+          nullable: true
+        region:
+          type: string
+          nullable: true
+        baseUrl:
+          type: string
+          nullable: true
+        prefix:
+          type: string
+          nullable: true
+    GoogleDriveStorageSettings:
+      type: object
+      properties:
+        folderId:
+          type: string
+          nullable: true

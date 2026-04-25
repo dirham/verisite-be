@@ -6,7 +6,20 @@
 - simple synchronous flows for v1
 - PostgreSQL as the source of truth
 - object storage for uploaded files
+- storage provider selection persisted in app settings
 - optimize for easy Codex iteration and low-risk slices
+
+## Admin UI Direction
+
+- the backend remains the source of truth for auth, role checks, storage settings, and reimbursement review actions
+- only `admin` is an elevated role for now
+- the future admin interface should be a separate web frontend, not embedded in Phoenix templates for now
+- prefer Vue for that frontend and `shadcn-vue` for a minimal, clean admin UI system
+- target a simple operator experience first:
+  - storage provider settings
+  - reimbursement review actions
+  - admin-only navigation first
+  - later role creation and route-access management controlled by admins
 
 ## Suggested Layout
 

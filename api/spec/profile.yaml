@@ -43,7 +43,7 @@ paths:
   /profile/photo:
     post:
       summary: Upload or replace the signed-in employee profile picture
-      description: The current mock implementation stores a selected photo name and path.
+      description: The profile photo must reference a previously uploaded file id.
       operationId: updateProfilePhoto
       security:
         - bearerAuth: []
@@ -130,6 +130,9 @@ components:
           type: string
         aboutDescription:
           type: string
+        profileImageFileId:
+          type: string
+          nullable: true
         profileImagePath:
           type: string
           nullable: true
@@ -151,12 +154,9 @@ components:
     UpdateProfilePhotoRequest:
       type: object
       required:
-        - photoPath
-        - photoName
+        - fileId
       properties:
-        photoPath:
-          type: string
-        photoName:
+        fileId:
           type: string
     UpdateLanguagePreferenceRequest:
       type: object

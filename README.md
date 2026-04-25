@@ -10,6 +10,7 @@ Build the backend for:
 - attendance clock in and clock out
 - suspicious attendance marking
 - reimbursement submission and review
+- file uploads with switchable storage settings
 - employee profile
 - CSV report export
 
@@ -31,6 +32,12 @@ Build the backend for:
 - S3-compatible file storage
 - Docker Compose for local services
 
+For the future admin web app, the current direction is:
+
+- Vue
+- `shadcn-vue`
+- a separate frontend slice focused on a minimal clean admin UI rather than Phoenix server-rendered pages
+
 ## Foundation Status
 
 The workspace now includes:
@@ -40,6 +47,7 @@ The workspace now includes:
 - Docker Compose for PostgreSQL and MinIO
 - environment template
 - health endpoint scaffold
+- provider-backed file upload flow with persisted storage settings
 - local API spec copy for backend work
 
 ## Local Commands
@@ -63,6 +71,16 @@ Use Docker for the full local stack:
 - MinIO console: `http://localhost:19001`
 
 The app container waits for Postgres, creates the dev database, runs migrations, loads seed data, and starts Phoenix. Source code is bind-mounted into `/app`; dependencies, build output, Postgres data, and MinIO data live in Docker volumes.
+
+For S3-compatible uploads, keep non-secret routing in the storage settings API and keep credentials in environment variables:
+
+- `AWS_ACCESS_KEY_ID` or `STORAGE_ACCESS_KEY`
+- `AWS_SECRET_ACCESS_KEY` or `STORAGE_SECRET_KEY`
+- optional `AWS_SESSION_TOKEN`
+
+The `aws` provider uses SigV4 path-style uploads, so it works against AWS S3 and MinIO-style endpoints when `aws.baseUrl` points at the target service.
+
+Google Drive is intentionally deferred for now. The next product-facing admin work should focus on admin-only backend access plus a minimal admin UI for storage settings and reimbursement review. Later, admins can create roles and manage which roles can access routes.
 
 Open a database shell with `docker compose exec postgres psql -U postgres -d verisite_be`. When running `mix` directly on the host against the Docker database, set `DB_PORT=15432`.
 
