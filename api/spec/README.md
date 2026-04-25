@@ -17,6 +17,7 @@ Use this folder as the contract source of truth for backend-facing behavior.
 
 - `auth.yaml`: login contract
 - `attendance.yaml`: attendance actions and history
+- `files.yaml`: upload registration and storage settings
 - `profile.yaml`: profile read and update flows
 - `reimbursement.yaml`: employee and admin reimbursement flows
 - `reports.yaml`: employee report insights and CSV export responses
@@ -39,5 +40,5 @@ Use this folder as the contract source of truth for backend-facing behavior.
 - auth still does not define token fields or logout invalidation details
 - attendance write endpoints now expect location, timezone, and device signals; periodic location samples still need implementation detail notes in backend docs
 - reimbursement admin endpoints still rely on explicit `reviewerId` in the payload
-- profile photo and reimbursement attachments still use mock-friendly file paths
+- file uploads now go through `files.yaml`; profile photo and reimbursement requests reference uploaded file ids
 - report exports still return inline CSV content rather than an async file flow

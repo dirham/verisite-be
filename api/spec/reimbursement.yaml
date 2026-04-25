@@ -17,7 +17,7 @@ paths:
                 $ref: '#/components/schemas/ReimbursementListResponse'
     post:
       summary: Submit a reimbursement request as an employee
-      description: The current app submits receipt attachments together with the request.
+      description: The request references receipt files uploaded earlier through the files API.
       operationId: submitReimbursement
       requestBody:
         required: true
@@ -174,18 +174,11 @@ components:
     ReimbursementAttachment:
       type: object
       required:
-        - id
-        - name
-        - path
+        - fileId
         - source
       properties:
-        id:
+        fileId:
           type: string
-        name:
-          type: string
-        path:
-          type: string
-          description: Placeholder local or uploaded file path used by the current mock app flow.
         source:
           type: string
           enum:
@@ -225,7 +218,30 @@ components:
         attachments:
           type: array
           items:
-            $ref: '#/components/schemas/ReimbursementAttachment'
+            type: object
+            required:
+              - id
+              - fileId
+              - name
+              - path
+              - source
+            properties:
+              id:
+                type: string
+              fileId:
+                type: string
+              name:
+                type: string
+              path:
+                type: string
+              source:
+                type: string
+              provider:
+                type: string
+                enum:
+                  - local
+                  - aws
+                  - google_drive
         notes:
           type: string
         reviewedBy:
