@@ -18,6 +18,13 @@ defmodule VerisiteBeWeb.ErrorResponse do
     |> json(%{message: "Invalid request", errors: errors_on(changeset)})
   end
 
+  def conflict(conn, message) do
+    conn
+    |> put_status(:conflict)
+    |> json(%{message: message})
+    |> halt()
+  end
+
   defp errors_on(changeset) do
     traverse_errors(changeset, fn {message, opts} ->
       Enum.reduce(opts, message, fn {key, value}, acc ->

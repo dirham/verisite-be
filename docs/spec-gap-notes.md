@@ -6,7 +6,7 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 - [x] login response defines a bearer access token field
 - [x] logout invalidates the current persisted session
-- [ ] attendance requests do not include location, timezone, or device integrity fields needed for suspicious checks
+- [x] attendance requests now include location, timezone, and device integrity fields needed for suspicious checks
 - [ ] reimbursement admin endpoints do not define how admin identity is authenticated
 - [ ] attachment and profile photo requests use app-local file paths instead of durable upload identifiers
 - [ ] reports only cover `singleEmployee` scope, while broader reporting is mentioned elsewhere in product planning
@@ -35,7 +35,7 @@ The current spec is enough to plan the backend, but a few decisions should be se
 - [x] auth token and session contract
 - [ ] upload and file identifier contract
 - [ ] admin authorization contract
-- [ ] attendance suspicious-check request fields
+- [x] attendance suspicious-check request fields
 - [ ] shared error envelope
 - [ ] report scope and pagination decisions
 
