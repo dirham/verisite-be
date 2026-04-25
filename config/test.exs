@@ -1,10 +1,11 @@
 import Config
 
 config :verisite_be, VerisiteBe.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "verisite_be_test",
+  username: System.get_env("DB_USER", "postgres"),
+  password: System.get_env("DB_PASSWORD", "postgres"),
+  hostname: System.get_env("DB_HOST", "localhost"),
+  port: String.to_integer(System.get_env("DB_PORT", "5432")),
+  database: System.get_env("DB_NAME", "verisite_be_test"),
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
 

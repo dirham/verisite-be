@@ -45,6 +45,7 @@ components:
         - employeeId
         - email
         - displayName
+        - token
       properties:
         employeeId:
           type: string
@@ -53,6 +54,9 @@ components:
           format: email
         displayName:
           type: string
+        token:
+          type: string
+          description: Bearer token for authenticated profile and feature requests.
     AuthError:
       type: object
       required:

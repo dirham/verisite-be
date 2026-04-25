@@ -3,6 +3,48 @@ info:
   title: Verisite Reports API
   version: 0.1.0
 paths:
+  /reports/attendance/insights:
+    get:
+      summary: Get personal attendance insights for the signed-in employee
+      description: Returns worked-hour totals per day for the selected one-week or one-month period.
+      operationId: getAttendanceInsights
+      parameters:
+        - in: query
+          name: period
+          required: true
+          schema:
+            type: string
+            enum:
+              - week
+              - month
+      responses:
+        '200':
+          description: Attendance insights returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AttendanceInsightsResponse'
+  /reports/reimbursements/summary:
+    get:
+      summary: Get personal reimbursement summary for the signed-in employee
+      description: Returns employee-only reimbursement totals and status breakdown for the selected period.
+      operationId: getReimbursementSummary
+      parameters:
+        - in: query
+          name: period
+          required: true
+          schema:
+            type: string
+            enum:
+              - week
+              - month
+      responses:
+        '200':
+          description: Reimbursement summary returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReimbursementSummaryResponse'
   /reports/attendance/export:
     get:
       summary: Export the signed-in employee attendance report in Excel-ready CSV format
@@ -29,6 +71,137 @@ paths:
                 $ref: '#/components/schemas/GeneratedReport'
 components:
   schemas:
+    AttendanceInsightsResponse:
+      type: object
+      required:
+        - period
+        - generatedAt
+        - summary
+        - days
+      properties:
+        period:
+          type: string
+          enum:
+            - week
+            - month
+        generatedAt:
+          type: string
+          format: date-time
+        summary:
+          $ref: '#/components/schemas/AttendanceInsightsSummary'
+        days:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttendanceInsightDay'
+    AttendanceInsightsSummary:
+      type: object
+      required:
+        - totalWorkedHours
+        - daysPresent
+        - averageWorkedHours
+      properties:
+        totalWorkedHours:
+          type: number
+          format: double
+          minimum: 0
+        daysPresent:
+          type: integer
+          minimum: 0
+        averageWorkedHours:
+          type: number
+          format: double
+          minimum: 0
+    AttendanceInsightDay:
+      type: object
+      required:
+        - date
+        - workedHours
+        - suspicious
+      properties:
+        date:
+          type: string
+          format: date
+        workedHours:
+          type: number
+          format: double
+          minimum: 0
+        suspicious:
+          type: boolean
+        suspiciousReason:
+          type: string
+          nullable: true
+    ReimbursementSummaryResponse:
+      type: object
+      required:
+        - period
+        - generatedAt
+        - totals
+        - statuses
+      properties:
+        period:
+          type: string
+          enum:
+            - week
+            - month
+        generatedAt:
+          type: string
+          format: date-time
+        totals:
+          $ref: '#/components/schemas/ReimbursementSummaryTotals'
+        statuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/ReimbursementStatusTotal'
+    ReimbursementSummaryTotals:
+      type: object
+      required:
+        - submittedAmount
+        - pendingAmount
+        - approvedAmount
+        - rejectedAmount
+        - canceledAmount
+      properties:
+        submittedAmount:
+          type: number
+          format: double
+          minimum: 0
+        pendingAmount:
+          type: number
+          format: double
+          minimum: 0
+        approvedAmount:
+          type: number
+          format: double
+          minimum: 0
+        rejectedAmount:
+          type: number
+          format: double
+          minimum: 0
+        canceledAmount:
+          type: number
+          format: double
+          minimum: 0
+    ReimbursementStatusTotal:
+      type: object
+      required:
+        - status
+        - requestCount
+        - totalAmount
+      properties:
+        status:
+          type: string
+          enum:
+            - pending
+            - approved
+            - rejected
+            - canceled
+        requestCount:
+          type: integer
+          minimum: 0
+        totalAmount:
+          type: number
+          format: double
+          minimum: 0
     GeneratedReport:
       type: object
       required:

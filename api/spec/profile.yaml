@@ -7,6 +7,8 @@ paths:
     get:
       summary: Get the signed-in employee profile
       operationId: getProfile
+      security:
+        - bearerAuth: []
       responses:
         '200':
           description: Employee profile returned
@@ -14,9 +16,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeProfile'
+        '401':
+          description: Missing or invalid bearer token
     patch:
       summary: Update signed-in employee profile fields such as name and division
       operationId: updateProfile
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -30,11 +36,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeProfile'
+        '401':
+          description: Missing or invalid bearer token
+        '422':
+          description: Invalid profile payload
   /profile/photo:
     post:
       summary: Upload or replace the signed-in employee profile picture
       description: The current mock implementation stores a selected photo name and path.
       operationId: updateProfilePhoto
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -48,10 +60,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeProfile'
+        '401':
+          description: Missing or invalid bearer token
+        '422':
+          description: Invalid profile photo payload
   /profile/language:
     put:
       summary: Update the signed-in employee language preference
       operationId: updateProfileLanguage
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -65,14 +83,26 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EmployeeProfile'
+        '401':
+          description: Missing or invalid bearer token
+        '422':
+          description: Invalid language preference payload
   /profile/logout:
     post:
       summary: Logout the signed-in employee
       operationId: logoutProfile
+      security:
+        - bearerAuth: []
       responses:
         '204':
           description: Employee logged out
+        '401':
+          description: Missing or invalid bearer token
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
   schemas:
     EmployeeProfile:
       type: object

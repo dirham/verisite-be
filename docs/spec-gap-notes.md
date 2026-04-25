@@ -4,8 +4,8 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 ## Open Questions
 
-- [ ] login response does not yet define access token or refresh token fields
-- [ ] logout is defined, but session invalidation details are not
+- [x] login response defines a bearer access token field
+- [x] logout invalidates the current persisted session
 - [ ] attendance requests do not include location, timezone, or device integrity fields needed for suspicious checks
 - [ ] reimbursement admin endpoints do not define how admin identity is authenticated
 - [ ] attachment and profile photo requests use app-local file paths instead of durable upload identifiers
@@ -14,7 +14,7 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 ## Safe v1 Interpretation
 
-- keep the current response shapes stable
+- keep response shapes stable unless the backend needs a documented contract field, such as the auth bearer token
 - add internal persistence fields without exposing them yet
 - implement inline CSV report responses as written
 - keep uploads behind a file service that can translate real storage keys into the current response `path` fields
@@ -32,7 +32,7 @@ The current spec is enough to plan the backend, but a few decisions should be se
 
 ## Recommended Resolution Order
 
-- [ ] auth token and session contract
+- [x] auth token and session contract
 - [ ] upload and file identifier contract
 - [ ] admin authorization contract
 - [ ] attendance suspicious-check request fields

@@ -44,10 +44,32 @@ The workspace now includes:
 
 ## Local Commands
 
+- `docker compose up --build`
+- `docker compose run --rm test`
 - `mix deps.get`
 - `mix ecto.create`
+- `mix ecto.migrate`
+- `mix run priv/repo/seeds.exs`
 - `mix phx.server`
 - `mix test`
+
+## Docker Workflow
+
+Use Docker for the full local stack:
+
+- `docker compose up --build`
+- API: `http://localhost:4000/api/health`
+- Postgres from host tools: `localhost:15432`
+- MinIO console: `http://localhost:19001`
+
+The app container waits for Postgres, creates the dev database, runs migrations, loads seed data, and starts Phoenix. Source code is bind-mounted into `/app`; dependencies, build output, Postgres data, and MinIO data live in Docker volumes.
+
+Open a database shell with `docker compose exec postgres psql -U postgres -d verisite_be`. When running `mix` directly on the host against the Docker database, set `DB_PORT=15432`.
+
+Seeded local accounts use `password123`:
+
+- `employee@verisite.local`
+- `admin@verisite.local`
 
 ## Working Rules
 

@@ -1,0 +1,6 @@
+_build
+deps
+.git
+.env
+.DS_Store
+docker-compose.override.yml

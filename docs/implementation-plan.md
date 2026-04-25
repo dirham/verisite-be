@@ -12,23 +12,23 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] base endpoint and router exist
 - [x] health endpoint exists
 - [x] repo configuration exists
-- [ ] domain schemas exist
-- [ ] migrations exist
-- [ ] feature routes exist beyond health
-- [ ] contract-aligned auth flow exists
+- [x] domain schemas exist
+- [x] migrations exist
+- [x] feature routes exist beyond health
+- [x] contract-aligned auth flow exists
 - [ ] contract-aligned attendance flow exists
 - [ ] contract-aligned reimbursement flow exists
 - [ ] contract-aligned reports flow exists
 
 ## Current Focus
 
-- [ ] complete persistence foundation before adding feature routes
-- [ ] define the first feature slice after persistence is in place
+- [x] complete persistence foundation before adding feature routes
+- [x] define the first feature slice after persistence is in place
 
 ## Modules
 
-- [ ] auth
-- [ ] employees
+- [x] auth
+- [x] employees
 - [ ] attendance
 - [ ] reimbursements
 - [ ] reports
@@ -42,28 +42,28 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] environment config
 - [x] PostgreSQL connection configuration
 - [x] Ecto repo configuration
-- [ ] Ecto schemas
-- [ ] Ecto migrations
+- [x] Ecto schemas
+- [x] Ecto migrations
 - [x] health endpoint
-- [ ] shared validation
-- [ ] shared error handling
-- [ ] seed script
-- [ ] local setup instructions validated
+- [x] shared validation
+- [x] shared error handling
+- [x] seed script
+- [x] local setup instructions validated
 
 ## 2. Auth And Employees
 
-- [ ] login
-- [ ] bearer auth guard
-- [ ] session persistence
-- [ ] logout
-- [ ] profile read
-- [ ] profile update
-- [ ] profile language update
-- [ ] profile photo persistence
+- [x] login
+- [x] bearer auth guard
+- [x] session persistence
+- [x] logout
+- [x] profile read
+- [x] profile update
+- [x] profile language update
+- [x] profile photo persistence
 
 ## 3. Attendance
 
-- [ ] clock in
+- [x] clock in
 - [ ] clock out
 - [ ] attendance history
 - [ ] suspicious flag rule service
@@ -102,38 +102,38 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 ### Slice F2. Persistence Foundation
 
-- [ ] add initial Ecto schemas for employees, sessions, attendance, reimbursements, and files
-- [ ] add the first database migration set
-- [ ] add seed data for local development
+- [x] add initial Ecto schemas for employees, sessions, attendance, reimbursements, and files
+- [x] add the first database migration set
+- [x] add seed data for local development
 
 ### Slice F3. Shared HTTP Foundation
 
-- [ ] add request validation strategy
-- [ ] add shared error response mapping
-- [ ] add auth plug scaffolding
+- [x] add request validation strategy
+- [x] add shared error response mapping
+- [x] add auth plug scaffolding
 - [ ] add API contract serving or validation hooks if needed
 
 ### Slice A1. Auth Skeleton
 
-- [ ] define employee and session schemas
-- [ ] add login request and response mapping
-- [ ] add auth plug skeleton for bearer token parsing
-- [ ] add placeholder session issuance flow
-- [ ] verify the auth slice with a focused test or compile check
+- [x] define employee and session schemas
+- [x] add login request and response mapping
+- [x] add auth plug skeleton for bearer token parsing
+- [x] add placeholder session issuance flow
+- [x] verify the auth slice with a focused test or compile check
 
 ### Slice E1. Employee Profile Read
 
-- [ ] define profile query path from authenticated employee to response shape
-- [ ] add profile presenter or response mapper
-- [ ] expose the profile read endpoint
-- [ ] verify profile response shape against the current contract
+- [x] define profile query path from authenticated employee to response shape
+- [x] add profile presenter or response mapper
+- [x] expose the profile read endpoint
+- [x] verify profile response shape against the current contract
 
 ### Slice T1. Attendance Clock In
 
-- [ ] define attendance record schema and changeset
-- [ ] implement clock-in domain flow
-- [ ] expose the clock-in endpoint
-- [ ] verify one success path and one invalid path
+- [x] define attendance record schema and changeset
+- [x] implement clock-in domain flow
+- [x] expose the clock-in endpoint
+- [x] verify one success path and one invalid path
 
 ### Slice R1. Reimbursement Submission
 
@@ -146,9 +146,9 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 - [x] format Elixir files
 - [x] parse Elixir source files successfully
-- [ ] fetch dependencies with `mix deps.get`
-- [ ] run `mix test`
-- [ ] run a compile-level verification after dependencies are installed
+- [x] fetch dependencies with `mix deps.get`
+- [x] run `mix test`
+- [x] run a compile-level verification after dependencies are installed
 
 ## Done Criteria
 
