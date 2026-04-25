@@ -26,5 +26,8 @@ defmodule VerisiteBeWeb.Router do
     put("/profile/language", ProfileController, :update_language)
     post("/profile/logout", ProfileController, :logout)
     post("/attendance/clock-in", AttendanceController, :clock_in)
+    post("/attendance/clock-out", AttendanceController, :clock_out)
+    post("/attendance/location-samples", AttendanceController, :location_samples)
+    get("/attendance/history", AttendanceController, :history)
   end
 end

@@ -16,7 +16,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] migrations exist
 - [x] feature routes exist beyond health
 - [x] contract-aligned auth flow exists
-- [ ] contract-aligned attendance flow exists
+- [x] contract-aligned attendance flow exists
 - [ ] contract-aligned reimbursement flow exists
 - [ ] contract-aligned reports flow exists
 
@@ -29,7 +29,7 @@ The backend workspace keeps a local copy of the contracts so backend development
 
 - [x] auth
 - [x] employees
-- [ ] attendance
+- [x] attendance
 - [ ] reimbursements
 - [ ] reports
 - [ ] files
@@ -64,9 +64,10 @@ The backend workspace keeps a local copy of the contracts so backend development
 ## 3. Attendance
 
 - [x] clock in
-- [ ] clock out
-- [ ] attendance history
-- [ ] suspicious flag rule service
+- [x] clock out
+- [x] attendance history
+- [x] location sample intake
+- [ ] suspicious flag rule service hardening
 
 ## 4. Reimbursements
 
@@ -133,7 +134,9 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [x] define attendance record schema and changeset
 - [x] implement clock-in domain flow
 - [x] expose the clock-in endpoint
-- [x] verify one success path and one invalid path
+- [x] add session and location persistence required by the updated spec
+- [x] expose clock-out, location sample, and history endpoints
+- [x] verify success and invalid attendance paths
 
 ### Slice R1. Reimbursement Submission
 
