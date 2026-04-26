@@ -39,6 +39,6 @@ Use this folder as the contract source of truth for backend-facing behavior.
 
 - auth still does not define token fields or logout invalidation details
 - attendance write endpoints now expect location, timezone, and device signals; periodic location samples still need implementation detail notes in backend docs
-- reimbursement admin endpoints still rely on explicit `reviewerId` in the payload
+- reimbursement admin endpoints derive reviewer identity from the authenticated admin session
 - file uploads now go through `files.yaml`; profile photo and reimbursement requests reference uploaded file ids
 - report exports still return inline CSV content rather than an async file flow

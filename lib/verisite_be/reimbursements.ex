@@ -73,14 +73,13 @@ defmodule VerisiteBe.Reimbursements do
     end
   end
 
-  def approve_request(%Employee{} = employee, request_id, attrs)
-      when is_binary(request_id) and is_map(attrs) do
-    with {:ok, reviewer_id} <- validate_reviewer(attrs, employee.id),
-         %ReimbursementRequest{} = request <- Repo.get(ReimbursementRequest, request_id),
+  def approve_request(%Employee{} = employee, request_id, _attrs)
+      when is_binary(request_id) do
+    with %ReimbursementRequest{} = request <- Repo.get(ReimbursementRequest, request_id),
          :ok <- ensure_status(request, ["pending"], :not_approvable) do
       request
       |> ReimbursementRequest.changeset(%{
-        reviewer_id: reviewer_id,
+        reviewer_id: employee.id,
         reviewed_at: DateTime.utc_now() |> DateTime.truncate(:second),
         status: "approved",
         rejection_reason: nil
@@ -93,20 +92,19 @@ defmodule VerisiteBe.Reimbursements do
     end
   end
 
-  def approve_request(%Employee{} = _employee, _request_id, _attrs),
-    do: {:error, invalid_payload_changeset()}
+  def approve_request(%Employee{} = _employee, _request_id, _attrs), do: {:error, :not_found}
 
   def reject_request(%Employee{} = employee, request_id, attrs)
       when is_binary(request_id) and is_map(attrs) do
-    with {:ok, review} <- validate_rejection(attrs, employee.id),
+    with {:ok, rejection_reason} <- validate_rejection(attrs),
          %ReimbursementRequest{} = request <- Repo.get(ReimbursementRequest, request_id),
          :ok <- ensure_status(request, ["pending"], :not_rejectable) do
       request
       |> ReimbursementRequest.changeset(%{
-        reviewer_id: review.reviewer_id,
+        reviewer_id: employee.id,
         reviewed_at: DateTime.utc_now() |> DateTime.truncate(:second),
         status: "rejected",
-        rejection_reason: review.rejection_reason
+        rejection_reason: rejection_reason
       })
       |> Repo.update()
       |> with_preloaded_attachments()
@@ -246,47 +244,15 @@ defmodule VerisiteBe.Reimbursements do
 
   defp validate_attachment(_attrs), do: {:error, invalid_payload_changeset()}
 
-  defp validate_reviewer(attrs, current_employee_id) do
+  defp validate_rejection(attrs) do
     changeset =
-      {%{}, %{reviewerId: :string}}
-      |> Changeset.cast(attrs, [:reviewerId])
-      |> Changeset.validate_required([:reviewerId])
-      |> validate_uuid(:reviewerId)
-      |> Changeset.validate_change(:reviewerId, fn :reviewerId, reviewer_id ->
-        if reviewer_id == current_employee_id do
-          []
-        else
-          [reviewerId: "must match the authenticated reviewer"]
-        end
-      end)
+      {%{}, %{rejectionReason: :string}}
+      |> Changeset.cast(attrs, [:rejectionReason])
+      |> Changeset.validate_required([:rejectionReason])
+      |> Changeset.validate_length(:rejectionReason, min: 3)
 
     if changeset.valid? do
-      {:ok, Changeset.get_field(changeset, :reviewerId)}
-    else
-      {:error, changeset}
-    end
-  end
-
-  defp validate_rejection(attrs, current_employee_id) do
-    changeset =
-      {%{}, %{reviewerId: :string, rejectionReason: :string}}
-      |> Changeset.cast(attrs, [:reviewerId, :rejectionReason])
-      |> Changeset.validate_required([:reviewerId, :rejectionReason])
-      |> validate_uuid(:reviewerId)
-      |> Changeset.validate_change(:reviewerId, fn :reviewerId, reviewer_id ->
-        if reviewer_id == current_employee_id do
-          []
-        else
-          [reviewerId: "must match the authenticated reviewer"]
-        end
-      end)
-
-    if changeset.valid? do
-      {:ok,
-       %{
-         reviewer_id: Changeset.get_field(changeset, :reviewerId),
-         rejection_reason: Changeset.get_field(changeset, :rejectionReason)
-       }}
+      {:ok, Changeset.get_field(changeset, :rejectionReason)}
     else
       {:error, changeset}
     end
