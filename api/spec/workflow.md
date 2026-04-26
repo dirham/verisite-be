@@ -36,7 +36,7 @@ Keep the OpenAPI files easy to implement from and easy to keep in sync with the 
 - error response schemas are not standardized across files yet
 - authenticated endpoints do not yet define a shared security scheme
 - request validation detail is uneven across endpoints
-- admin flows still expose reviewer identity in request payloads rather than auth context
+- admin reimbursement review flows derive reviewer identity from auth context
 
 ## When To Change The Spec First
 

@@ -58,6 +58,7 @@ paths:
   /admin/reimbursements/{requestId}/approve:
     post:
       summary: Approve a reimbursement request as an admin reviewer
+      description: Reviewer identity is taken from the authenticated admin session.
       operationId: approveReimbursement
       parameters:
         - in: path
@@ -65,12 +66,6 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ApproveReimbursementRequest'
       responses:
         '200':
           description: Reimbursement request approved
@@ -81,6 +76,7 @@ paths:
   /admin/reimbursements/{requestId}/reject:
     post:
       summary: Reject a reimbursement request as an admin reviewer
+      description: Reviewer identity is taken from the authenticated admin session.
       operationId: rejectReimbursement
       parameters:
         - in: path
@@ -149,19 +145,12 @@ components:
             $ref: '#/components/schemas/ReimbursementAttachment'
     ApproveReimbursementRequest:
       type: object
-      required:
-        - reviewerId
-      properties:
-        reviewerId:
-          type: string
+      description: Empty body. Reviewer identity is derived from authentication context.
     RejectReimbursementRequest:
       type: object
       required:
-        - reviewerId
         - rejectionReason
       properties:
-        reviewerId:
-          type: string
         rejectionReason:
           type: string
     AttachPaymentReferenceRequest:

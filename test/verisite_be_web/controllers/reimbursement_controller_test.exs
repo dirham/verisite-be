@@ -180,7 +180,7 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
     conn =
       build_conn()
       |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/api/admin/reimbursements/#{request.id}/approve", %{"reviewerId" => admin.id})
+      |> post("/api/admin/reimbursements/#{request.id}/approve", %{})
 
     assert %{
              "status" => "approved",
@@ -204,7 +204,6 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
       build_conn()
       |> put_req_header("authorization", "Bearer #{token}")
       |> post("/api/admin/reimbursements/#{request.id}/reject", %{
-        "reviewerId" => admin.id,
         "rejectionReason" => "Receipt is incomplete"
       })
 
@@ -240,9 +239,23 @@ defmodule VerisiteBeWeb.ReimbursementControllerTest do
     conn =
       build_conn()
       |> put_req_header("authorization", "Bearer #{token}")
-      |> post("/api/admin/reimbursements/#{request.id}/approve", %{"reviewerId" => employee.id})
+      |> post("/api/admin/reimbursements/#{request.id}/approve", %{})
 
     assert json_response(conn, 403) == %{"message" => "Admin access required"}
+  end
+
+  test "requires only rejection reason for admin rejection", %{
+    employee: employee,
+    admin_token: token
+  } do
+    request = insert_request(employee.id, %{status: "pending"})
+
+    conn =
+      build_conn()
+      |> put_req_header("authorization", "Bearer #{token}")
+      |> post("/api/admin/reimbursements/#{request.id}/reject", %{})
+
+    assert %{"errors" => %{"rejectionReason" => [_ | _]}} = json_response(conn, 422)
   end
 
   test "returns not found when employee cancels someone else's reimbursement", %{
