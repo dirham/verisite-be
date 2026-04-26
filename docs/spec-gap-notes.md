@@ -7,11 +7,13 @@ The current spec is enough to plan the backend, but a few decisions should be se
 - [x] login response defines a bearer access token field
 - [x] logout invalidates the current persisted session
 - [x] attendance requests now include location, timezone, and device integrity fields needed for suspicious checks
-- [ ] reimbursement admin endpoints do not define how admin identity is authenticated
+- [x] reimbursement admin endpoints derive reviewer identity from the authenticated admin session
 - [ ] future custom-role and route-permission management is not defined yet
 - [x] attachment and profile photo requests use uploaded file identifiers instead of raw client paths
 - [ ] reports only cover `singleEmployee` scope, while broader reporting is mentioned elsewhere in product planning
 - [ ] error response format is inconsistent across endpoints
+- [ ] organization or workspace resolution is not defined yet for future SaaS onboarding
+- [ ] invite or join flow for putting employees into an organization is not defined yet
 
 ## Safe v1 Interpretation
 
@@ -37,6 +39,7 @@ The current spec is enough to plan the backend, but a few decisions should be se
 - [x] auth token and session contract
 - [x] upload and file identifier contract
 - [ ] admin authorization contract
+- [ ] organization resolution and membership contract
 - [ ] custom role and route-authorization contract
 - [x] attendance suspicious-check request fields
 - [ ] shared error envelope
@@ -66,3 +69,12 @@ My recommendation for the next step is to make `verisite-be/api/spec` the primar
 - add custom role creation and route-permission management later, controlled by admins
 - keep backend APIs role-based so the UI only reflects permissions that already exist server-side
 - start with a minimal clean UI around storage settings and reimbursement review before expanding to broader admin dashboards
+
+## Organization Support Notes
+
+- prefer a lightweight organization or workspace model over heavy enterprise multi-tenancy for now
+- one mobile app should serve many client organizations instead of separate app builds per client
+- one shared backend is acceptable as long as organization boundaries are explicit in data, auth, and settings
+- `admin` should become an organization-scoped role before the admin UI expands much further
+- storage settings, invites, and future team-management features should be modeled per organization
+- separate database-per-customer, platform billing, and custom domains should stay out of scope until product demand justifies them

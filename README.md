@@ -38,6 +38,13 @@ For the future admin web app, the current direction is:
 - `shadcn-vue`
 - a separate frontend slice focused on a minimal clean admin UI rather than Phoenix server-rendered pages
 
+For future SaaS-style customer onboarding, the current direction is:
+
+- use a lightweight organization or workspace model rather than a heavy enterprise multi-tenant platform
+- keep one shared backend and one shared mobile app
+- let each client company operate inside its own organization boundary
+- add organization-aware auth, roles, invites, and storage settings before expanding the admin UI surface
+
 ## Foundation Status
 
 The workspace now includes:
@@ -80,7 +87,7 @@ For S3-compatible uploads, keep non-secret routing in the storage settings API a
 
 The `aws` provider uses SigV4 path-style uploads, so it works against AWS S3 and MinIO-style endpoints when `aws.baseUrl` points at the target service.
 
-Google Drive is intentionally deferred for now. The next product-facing admin work should focus on admin-only backend access plus a minimal admin UI for storage settings and reimbursement review. Later, admins can create roles and manage which roles can access routes.
+Google Drive is intentionally deferred for now. The next structural backend work should focus on organization support so auth, admin access, invites, and settings become company-scoped before the admin UI grows. After that, product-facing admin work should focus on a minimal admin UI for storage settings and reimbursement review. Later, admins can create roles and manage which roles can access routes.
 
 Open a database shell with `docker compose exec postgres psql -U postgres -d verisite_be`. When running `mix` directly on the host against the Docker database, set `DB_PORT=15432`.
 
