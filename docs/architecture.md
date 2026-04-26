@@ -7,7 +7,27 @@
 - PostgreSQL as the source of truth
 - object storage for uploaded files
 - storage provider selection persisted in app settings
+- lightweight organization or workspace boundaries before broader SaaS expansion
 - optimize for easy Codex iteration and low-risk slices
+
+## Organization Support Direction
+
+- prefer a workspace-style SaaS model over heavy enterprise multi-tenancy for now
+- keep one backend deployment and one mobile app shared across customers
+- represent each client company as an `organization`
+- scope employees, sessions, attendance, reimbursements, files, and settings to an organization
+- treat `admin` as an organization-scoped role, not a global operator role
+- keep room for a later platform-admin concept only if operations require it
+- avoid separate database-per-customer unless a later enterprise requirement forces it
+
+## Planned Organization Model
+
+- `organizations` becomes the top-level business boundary
+- existing `employees` can stay named as-is for now, but each record should belong to one organization
+- auth should resolve both the signed-in employee and the organization context
+- invites or join flows should attach employees to an organization
+- storage settings should move from one global row to one row per organization
+- future admin UI should operate within the current organization context
 
 ## Admin UI Direction
 
@@ -60,6 +80,7 @@ test/
 
 ## Main Entities
 
+- organization
 - employee
 - session
 - attendance_record
@@ -70,10 +91,11 @@ test/
 ## Main Rules
 
 - employee routes only expose the signed-in employee data
-- admin reimbursement actions require admin role
+- admin reimbursement actions require admin role within the current organization
 - reimbursement status transitions are strict
 - payment reference can only be attached after approval
 - suspicious attendance is review metadata, not a blocked action
+- organization-scoped settings and data should not bleed across customer boundaries
 
 ## Platform Notes
 

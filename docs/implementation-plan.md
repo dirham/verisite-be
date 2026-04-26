@@ -92,6 +92,14 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [ ] observability
 - [ ] contract cleanup for token flows
 
+## 7. Organization Support
+
+- [ ] add organization or workspace persistence
+- [ ] make auth and sessions organization-aware
+- [ ] scope admin permissions by organization
+- [ ] move settings and business data to organization boundaries
+- [ ] add invite or join flow planning for employee onboarding
+
 ## Slice Backlog
 
 ### Slice F1. Bootstrap
@@ -131,6 +139,28 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [ ] add audit-oriented storage settings and reimbursement review coverage
 - [ ] document the future admin web app contract for a minimal Vue + `shadcn-vue` UI
 - [ ] keep the admin UI as a separate frontend slice from this backend repo unless product direction changes
+
+### Slice O1. Organization Foundation
+
+- [ ] add an `organizations` table and seed a default local organization
+- [ ] add `organization_id` to employees and sessions
+- [ ] update auth lookup so identity resolves within an organization context
+- [ ] define how requests resolve the active organization, such as slug or subdomain later
+- [ ] keep the first rollout limited to one organization per employee
+
+### Slice O2. Organization Scoping
+
+- [ ] add `organization_id` to attendance, reimbursement, file, and storage-setting tables
+- [ ] update queries so organization boundaries are explicit in addition to employee ownership
+- [ ] move storage settings from a global singleton row to one row per organization
+- [ ] add tests that prove one organization cannot read or mutate another organization's data
+
+### Slice O3. Organization Admin And Onboarding
+
+- [ ] scope `admin` to organization membership rather than global authority
+- [ ] define a lightweight invite or join flow for employee onboarding into an organization
+- [ ] document the mobile-app assumption that one app serves many organizations
+- [ ] defer advanced platform-admin, billing, and custom-domain concerns until product demand is real
 
 ### Slice A1. Auth Skeleton
 
@@ -177,3 +207,4 @@ The backend workspace keeps a local copy of the contracts so backend development
 - [ ] database schema covers attendance, reimbursement, employee, session, and file data
 - [ ] local seed data supports employee and admin review flows
 - [ ] tests cover state transitions and CSV generation
+- [ ] organization direction is documented before admin UI scope expands further
